@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>MiniQr tracker v0.1</title>
+		<meta name="description" content="a web based QR code reader" />
+		<meta name="robots" content="index, follow" />
+		<link rel="stylesheet" href="css/lib/main.min.css" />
+		<link href="./stylesAndFonts/general.css" rel="stylesheet" type="text/css">    
+
+	</head>
+	<body>
+	<audio id="player" src="beep.wav"></audio>
+	<section id="feature-area" class="current slider-window">
+
+    <style>#feature-area {
+  background: white;
+  color: #efefef;
+  text-align: center;}
+  #feature-area .feature {
+    padding: 12px; }
+  #feature-area h1 {
+  color: black;
+    font-size: 48px;
+    line-height: 48px;
+    letter-spacing: -0.03em; }
+  #feature-area h2 {
+    font-size: 24px;
+    line-height: 24px;
+    color: black;
+    font-family: "HelveticaNeueW01-55Roma", "Helvetica", Arial, sans-serif;
+    letter-spacing: -0.05em; }
+</style>
+
+  
+  
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+    
+<center>
+<table border="1" width="690px">
+<tr width="690px">
+<td width="320px">
+		<div id="vid"></div>
+
+</td>
+<td width="50px">
+</td>
+<td width="320px">
+<img id="statusImage" src="objectIcon240.png"   >
+</td>
+</tr>
+</table>
+
+<br />
+<br />
+
+    <div class="feature">
+        <h2><div id="stdout"></div></h2>
+        <h2><div id="objectID"></div></h2>
+        <h2><div id="checkOUTFrom"></div></h2>
+        <h2><div id="checkINFrom"></div></h2>
+        <br />
+        <h2><div id="waitingFor"></div></h2>
+    </div>
+
+</center>
+</section>
+
+		
+		<script language="Javascript">
+function createRequestObject() {
+    var tmpXmlHttpObject;
+    
+    //depending on what the browser supports, use the right way to create the XMLHttpRequest object
+    if (window.XMLHttpRequest) { 
+        // Mozilla, Safari would use this method ...
+        tmpXmlHttpObject = new XMLHttpRequest();
+	
+    } else if (window.ActiveXObject) { 
+        // IE would use this method ...
+        tmpXmlHttpObject = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    
+    return tmpXmlHttpObject;
+}
+
+//call the above function to create the XMLHttpRequest object
+var http = createRequestObject();
+
+function makeGetRequest(wordId) {
+    //make a connection to the server ... specifying that you intend to make a GET request 
+    //to the server. Specifiy the page name and the URL parameters to send
+    http.open('get', 'pickedUpQR?data=' + wordId);
+	
+    //assign a handler for the response
+    http.onreadystatechange = processResponse;
+	
+    //actually send the request to the server
+    http.send(null);
+}
+
+function processResponse() {
+    //check if the response has been received from the server
+    if(http.readyState == 4){
+	
+        //read and assign the response from the server
+        var response = http.responseText;
+		
+		currentState = state_WAITING_PHONE;
+		$('#objectID').empty();
+		$('#checkINFrom').empty();
+		$('#checkOUTFrom').empty();
+		$('#waitingFor').empty().prepend($('<div>show the thing...</div>'));
+		lastDetectedName = '';
+		document.getElementById('player').load();
+		document.getElementById('player').play();
+		$('#statusImage').attr('src', 'objectIcon240.png');
+
+
+        //do additional parsing of the response, if needed
+		
+        //in this case simply assign the response to the contents of the <div> on the page. 
+        //document.getElementById('description').innerHTML = response;
+		
+        //If the server returned an error message like a 404 error, that message would be shown within the div tag!!. 
+        //So it may be worth doing some basic error before setting the contents of the <div>
+    }
+}
+
+var Base64 = {
+// private property
+_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+
+// public method for encoding
+encode : function (input) {
+    var output = "";
+    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+    var i = 0;
+
+    input = Base64._utf8_encode(input);
+
+    while (i < input.length) {
+
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+
+        enc1 = chr1 >> 2;
+        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+        enc4 = chr3 & 63;
+
+        if (isNaN(chr2)) {
+            enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+            enc4 = 64;
+        }
+
+        output = output +
+        Base64._keyStr.charAt(enc1) + Base64._keyStr.charAt(enc2) +
+        Base64._keyStr.charAt(enc3) + Base64._keyStr.charAt(enc4);
+
+    }
+
+    return output;
+},
+
+// public method for decoding
+decode : function (input) {
+    var output = "";
+    var chr1, chr2, chr3;
+    var enc1, enc2, enc3, enc4;
+    var i = 0;
+
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+    while (i < input.length) {
+
+        enc1 = Base64._keyStr.indexOf(input.charAt(i++));
+        enc2 = Base64._keyStr.indexOf(input.charAt(i++));
+        enc3 = Base64._keyStr.indexOf(input.charAt(i++));
+        enc4 = Base64._keyStr.indexOf(input.charAt(i++));
+
+        chr1 = (enc1 << 2) | (enc2 >> 4);
+        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+        chr3 = ((enc3 & 3) << 6) | enc4;
+
+        output = output + String.fromCharCode(chr1);
+
+        if (enc3 != 64) {
+            output = output + String.fromCharCode(chr2);
+        }
+        if (enc4 != 64) {
+            output = output + String.fromCharCode(chr3);
+        }
+
+    }
+
+    output = Base64._utf8_decode(output);
+
+    return output;
+
+},
+
+// private method for UTF-8 encoding
+_utf8_encode : function (string) {
+    string = string.replace(/\r\n/g,"\n");
+    var utftext = "";
+
+    for (var n = 0; n < string.length; n++) {
+
+        var c = string.charCodeAt(n);
+
+        if (c < 128) {
+            utftext += String.fromCharCode(c);
+        }
+        else if((c > 127) && (c < 2048)) {
+            utftext += String.fromCharCode((c >> 6) | 192);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+        else {
+            utftext += String.fromCharCode((c >> 12) | 224);
+            utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+            utftext += String.fromCharCode((c & 63) | 128);
+        }
+
+    }
+
+    return utftext;
+},
+
+// private method for UTF-8 decoding
+_utf8_decode : function (utftext) {
+    var string = "";
+    var i = 0;
+    var c = c1 = c2 = 0;
+
+    while ( i < utftext.length ) {
+
+        c = utftext.charCodeAt(i);
+
+        if (c < 128) {
+            string += String.fromCharCode(c);
+            i++;
+        }
+        else if((c > 191) && (c < 224)) {
+            c2 = utftext.charCodeAt(i+1);
+            string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+            i += 2;
+        }
+        else {
+            c2 = utftext.charCodeAt(i+1);
+            c3 = utftext.charCodeAt(i+2);
+            string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+            i += 3;
+        }
+
+    }
+    return string;
+}
+}
+</script>
+		
+		
+		<script>window.jQuery || document.write('<script src="js/vendor/jquery/jquery-1.8.1.min.js"><\/script>')</script>
+		<script src="js/vendor/jsqrcode/lib/jsqrcode.min.js"></script>
+		<script src="js/vendor/Sinne/lib/Sinne.js"></script>
+		<script src="js/lib/main.min.js"></script>
+		<script> 
+
+			// simple state management
+			var state_WAITING_PHONE = 0;
+			var state_WAITING_CHECKOUT = 1;
+			var state_WAITING_CHECKIN = 2;
+			var state_WAITING_JIRARESPONSE = 3;
+			var currentState = state_WAITING_PHONE;
+			$('#waitingFor').empty().prepend($('<div>show the thing...</div>'));
+
+			var lastDetectedName = '';
+                    
+			//after we have got access to the users webcam
+			var videoSuccess = function(video) { $('#vid').html(video) }
+			
+			//if we didn't get access to the webcam
+			var videoError = function(error) { $('#stdout').prepend('<b>Sorry, i need webcam access to do anything useful!</b>') }
+
+				var theObjectID;
+				var theFrom;
+				var theTo;
+			
+			//if we have successfully found a QR code
+			var qrSuccess = function(data) {
+			
+			    //console.log("all data:"+data);
+			    var splitData = data.split("*");
+			    data = splitData[0];
+			    base64Check = splitData[1];
+			    //console.log("data:"+data);
+			    //console.log("base64Check:"+base64Check);
+			    base64Calculation = Base64.encode(data);
+			    if (base64Check !== base64Calculation) {
+				    //$('#stdout').prepend($('<div>no match: '+base64Check+" vs: "+base64Calculation+'</div>').hide().fadeIn());
+				    return;
+			    }
+
+				//console.log(theObjectID + "|" + theFrom + "|" + theTo);
+				if (currentState === state_WAITING_PHONE){
+					if (data.indexOf("WPS-") !== -1) {
+						theObjectID = data;
+						currentState = state_WAITING_CHECKOUT;
+						$('#waitingFor').empty().prepend($('<div>checkout from... ?</div>'));
+$('#statusImage').attr('src', 'checkOut240.png');
+						$('#objectID').empty().prepend($('<div>object: '+data+'</div>'));
+							
+						document.getElementById('player').load();
+						document.getElementById('player').play()
+
+					}
+					else {
+						return;
+					}
+				}
+				else {
+					var onlyLetters = /^[a-zA-Z \.]*$/.test(data);
+					if (onlyLetters && lastDetectedName !== data) {
+							if (currentState === state_WAITING_CHECKOUT){
+								theFrom = data;
+								$('#checkOUTFrom').empty().prepend($('<div>from: '+data+'</div>'));
+								currentState = state_WAITING_CHECKIN;
+								$('#waitingFor').empty().prepend($('<div>checking to... ?</div>'));
+								$('#statusImage').attr('src', 'checkIn240.png');
+								lastDetectedName = data;
+								document.getElementById('player').load();
+								document.getElementById('player').play();
+							}						
+							else if (currentState === state_WAITING_CHECKIN){
+								theTo = data;
+								$('#checkINFrom').empty().prepend($('<div>to: '+data+'</div>'));
+								currentState = state_WAITING_JIRARESPONSE;
+								lastDetectedName = data;
+								makeGetRequest(theObjectID + "|" + theFrom + "|" + theTo);
+								document.getElementById('player').load();
+								document.getElementById('player').play();
+							}						
+					}
+					else {
+						return;
+					}
+				}
+			}
+			
+			//if we didn't find a QR code
+			var qrError = function(e) { /* console.log(e);*/ }
+			
+			//call the miniqr-reader function
+			Miniqr.reader(videoSuccess, videoError, qrSuccess, qrError);
+		</script>
+	</body>
+<script class="jsdom" src="http://code.jquery.com/jquery-1.8.0.min.js"></script></html>
