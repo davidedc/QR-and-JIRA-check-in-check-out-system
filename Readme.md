@@ -1,57 +1,25 @@
-#Miniqr.reader()
+#QR+JIRA check-in / check-out system
 
-Miniqr.reader() is a
-  
-  * simple
-  * browser based
-  * 100% client side 
-  * written in CoffeeScript/JS
-  * <b>QRcode</b> reader
-  * that takes your webcam as the input
-  
-##what does it do
-basically it accesses the useres webcam, if the users hold a QRcode in front of the webcam, the data gets decoded.
+This is based on the Miniqr.reader() library here: http://miniqr.com , which is a simple client-side QR code reader written in CoffeeScript.
 
-or, just try it <b><a href="http://miniqr.com/docs/demo/">http://miniqr.com/docs/demo/</a></b> (note: you need a QRcode in your hand, you can make one at <a href="http://miniqr.com/">miniqr</a>)
+This QR + JIRA check-in / check-out system allows you to do check-in and check-out of any object (from person to person, of from person to place and viceversa) using JIRA. The check-in and check-out happens waving QR tags in front of the camera.
 
+##How a user uses it
+Let's say you pick up a phone from a drawer and use it for the day.
+ * go to drawer and pick the phone. Wave the QR code of the phone in front of camera,
+ * wave the drawer-specific QR card in front of the camera (checkout)
+ * wave your personal QR card in front of the camera (check-in)
+The JIRA issue associated with the mobile phone is updated.
 
-##how to use it
+##How to configure and run
+ * the client(s) only need Chrome and a camera.
+ * the server only needs Python and the jira-python library from http://jira-python.readthedocs.org/
+ * configure the JIRA URL, admin login and password in minimalLoggingServer.py file
+ * run the server by doing " python -m minimalLoggingServer.py "
+ * point the browser in the client to http://ipOfServer:8080/index.html
 
-you call it like this  
- `Miniqr.reader(videoSuccess, videoError, qrSuccess, qrError[, options])`
- 
-it uses these callbacks
-
-`videoSuccess(video, stream)`
-
-after you have access to the users webcam, this function is called, it  gives you access to the webcams `<video>`, and if you want to go low-leve, the `stream` mediaobject of the webcam input.
-
-`videoError(error)` is called if you don't get access to the webcam of one reason or the other (i.e.: if the users doesn't hat a webcam or denies you access to it)
-
-`qrSuccess(data)` gives you access to the successfully decoded date from the QRcode.
-
-`qrError(error)` whenever you do not decode a QRcode from the video (i.e: if there is just nobody holding a QR code int the camera) then this callback is called. note: as, most of the time, there is no QRcode in front of the camera, just use `() ->` 
-
-Miniqr.reader() has currently 2 dependencies
-
- * <a href="https://github.com/franzenzenhofer/Sinne">https://github.com/franzenzenhofer/Sinne</a>
- * <a href="https://github.com/franzenzenhofer/jsqrcode">https://github.com/franzenzenhofer/jsqrcode</a> - my fork of jsqrcode
- 
-## people stuff
-me, <a href="http://www.franz-enzenhofer.com/">Franz Enzenhofer</a>, follow me **not** on <a href="https://twitter.com/enzenhofer">twitter</a>.
-
-oh, by the way, i'm at <a href="http://2012.lxjs.org/">LXJS 2012</a> and <a href="http://fronteers.nl/congres/2012">fronteers 2012</a>, talk to me!
-
-##MIT LICENSE 
-
-Copyright (c) 2012 Franz Enzenhofer
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-##what else?
-<img src="http://img.skitch.com/20100530-pay843me9dnyiuibede6sd86d4.png" alt="mind the whitespace"> the white space is a mandatory part of the QRcode!!!
- 
+##How to create the QR codes
+ * The "items" to be checked in and out are QR codes of the following string: "JIRAISSUEID*BASE64ENCODEOFJIRAISSUEID". For example is a mobile phone is tracked by JIRA issue WPS-1463, then the QR must encode for WPS-1463*V1BTLTE0NjM=
+ * Base64 encoding can be done online here:  http://www.opinionatedgeek.com/dotnet/tools/base64encode/
+ * QR encoding can be done online here: http://goqr.me/
+ * The reason why the base64 part is added is because the javascript library occasionally picks up the wrong QR code, so extra checks are done in the browser to discard those based on the base64 validation
