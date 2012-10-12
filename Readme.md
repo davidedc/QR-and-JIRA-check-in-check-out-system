@@ -17,9 +17,12 @@ The JIRA issue associated with the mobile phone is updated.
  * configure the JIRA URL, admin login and password in minimalLoggingServer.py file
  * run the server by doing " python -m minimalLoggingServer.py "
  * point the browser in the client to http://ipOfServer:8080/index.html
+ * in index.html, find "WPS" and replace it with your JIRA project name where you keep your tracking tickets.
+ * there is an indexLighter.html page that can be used on netbooks and "weaker" machines - basically contains no animations. If you use that, change "WPS" string in there.
 
 ##How to create the QR codes
  * The "items" to be checked in and out are QR codes of the following string: "JIRAISSUEID*BASE64ENCODEOFJIRAISSUEID". For example is a mobile phone is tracked by JIRA issue WPS-1463, then the QR must encode for WPS-1463*V1BTLTE0NjM=
  * Base64 encoding can be done online here:  http://www.opinionatedgeek.com/dotnet/tools/base64encode/
  * QR encoding can be done online here: http://goqr.me/
  * The reason why the base64 part is added is because the javascript library occasionally picks up the wrong QR code, so extra checks are done in the browser to discard those based on the base64 validation
+ * any of the locations need to start with "place."
