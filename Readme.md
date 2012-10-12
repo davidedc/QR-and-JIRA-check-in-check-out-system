@@ -1,6 +1,6 @@
 #QR+JIRA check-in / check-out system
 
-This is based on the Miniqr.reader() library here: http://miniqr.com , which is a simple client-side QR code reader written in CoffeeScript.
+This is based on the Miniqr.reader() library here: https://github.com/franzenzenhofer/miniqr , which is a simple client-side QR code reader written in CoffeeScript.
 
 This QR + JIRA check-in / check-out system allows you to do check-in and check-out of any object (from person to person, of from person to place and viceversa) using JIRA. The check-in and check-out happens waving QR tags in front of the camera.
 
