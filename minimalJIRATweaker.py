@@ -1,5 +1,5 @@
-# This script shows how to use the client in anonymous mode
-# against jira.atlassian.com.
+# This script shows how do basic tweaks to a JIRA
+# issue.
 
 from jira.client import JIRA
 
