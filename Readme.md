@@ -1,4 +1,6 @@
-![icon](https://raw.githubusercontent.com/davidedc/QR-and-JIRA-check-in-check-out-system/master/objectIcon.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/davidedc/QR-and-JIRA-check-in-check-out-system/master/objectIcon.png" alt="icon" width="200px" height="200px">
+</p>
 
 #QR+JIRA check-in / check-out system
 
