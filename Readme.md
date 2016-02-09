@@ -1,3 +1,5 @@
+![icon](https://raw.githubusercontent.com/davidedc/QR-and-JIRA-check-in-check-out-system/master/objectIcon.png)
+
 #QR+JIRA check-in / check-out system
 
 This is based on the Miniqr.reader() library here: https://github.com/franzenzenhofer/miniqr , which is a simple client-side QR code reader written in CoffeeScript.
