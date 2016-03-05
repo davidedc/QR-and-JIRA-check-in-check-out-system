@@ -8,6 +8,8 @@ This QR + JIRA check-in / check-out system allows you to do check-in and check-o
 
 Just create a JIRA issue for each object you want to track. Then generate the QR for the objects, the people and the places involved in the check-ins and check-outs.
 
+(see also my other JIRA-related projects [here](https://github.com/davidedc/JIRA-composable-command-line-tools) [here](https://github.com/davidedc/Customise-JIRA-Cards-Appearance) [here](https://github.com/davidedc/Basic-JIRA-And-Wiki-automation-with-Python-And-Mechanize) and [here](https://github.com/davidedc/JIRA-multi-board-view))
+
 ##Example
 Let's say you pick up a phone from a drawer and use it for the day.
  * go to drawer and pick the phone. Wave the QR code of the phone in front of camera (the QR code represents a JIRA issue that tracks the phone, which will be updated with the info related to the checkout/checkin that is happening),
